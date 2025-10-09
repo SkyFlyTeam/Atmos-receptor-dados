@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  atmos-app:
+    build: .
+    container_name: atmos-receptor
+    restart: unless-stopped
+    environment:
+      MONGO_URI: ${MONGO_URI}
+      MONGO_DATABASE: ${MONGO_DATABASE}
+      MONGO_COLLECTION: ${MONGO_COLLECTION}
+      MQTT_HOST: ${MQTT_HOST}
+      MQTT_TOPIC: ${MQTT_TOPIC}
+    volumes:
+      - ./logs:/app/logs
