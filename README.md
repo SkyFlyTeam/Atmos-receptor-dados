@@ -112,50 +112,11 @@ MQTT_TOPIC=sensors/data
 - **MONGO_COLLECTION**: Nome da coleção onde os dados serão inseridos
   
 - **MQTT_HOST**: Endereço do broker MQTT em nuvem
-  - HiveMQ Cloud: `broker.hivemq.com`
-  - AWS IoT: `seu-endpoint.iot.regiao.amazonaws.com`
-  - Outros: `seu-broker.com`
   
 - **MQTT_TOPIC**: Tópico MQTT para receber os dados dos sensores
 
 > **⚠️ Importante**: Você DEVE configurar o arquivo `.env` com suas credenciais de nuvem antes de executar.
 
-## 🏃‍♂️ Como Executar
-
-### Com Docker (Recomendado)
-
-```bash
-# Configure suas credenciais primeiro
-cp env.example .env
-# Edite o .env com suas credenciais de nuvem
-
-# Inicia a aplicação
-docker-compose up -d
-
-# Para desenvolvimento (com logs em tempo real)
-docker-compose up
-
-# Para parar
-docker-compose down
-
-# Para rebuild da aplicação após mudanças
-docker-compose up --build
-```
-
-### Execução Manual
-
-#### 1. Configure suas credenciais de nuvem
-```bash
-cp env.example .env
-# Edite o .env com suas credenciais
-```
-
-#### 2. Execute a aplicação
-```bash
-python src/main.py
-```
-
-> **Nota**: Para execução manual, você ainda precisa de MongoDB e MQTT em nuvem configurados.
 
 ## 📊 Funcionamento
 
@@ -169,33 +130,6 @@ A aplicação funciona da seguinte forma:
 4. **Inserção em lote**: A cada 3 segundos, insere todos os dados do buffer no MongoDB
 5. **Logs**: Registra todas as operações para monitoramento
 
-## 🔧 Configurações Avançadas
-
-### MongoDB Atlas
-```env
-MONGO_URI=mongodb+srv://usuario:senha@cluster.mongodb.net/atmos_database
-```
-
-### MongoDB Cloud (Outros provedores)
-```env
-MONGO_URI=mongodb://usuario:senha@host:porta/atmos_database
-```
-
-### HiveMQ Cloud
-```env
-MQTT_HOST=broker.hivemq.com
-```
-
-### AWS IoT Core
-```env
-MQTT_HOST=seu-endpoint.iot.regiao.amazonaws.com
-```
-
-### MQTT com Autenticação
-Para usar autenticação MQTT, você precisará modificar o arquivo `src/mqtt_client.py`:
-```python
-client.username_pw_set("usuario", "senha")
-```
 
 ## 📝 Estrutura do Projeto
 
@@ -212,62 +146,4 @@ Atmos-receptor-dados/
 ├── docker-compose.yml  # Orquestração da aplicação
 ├── .dockerignore       # Arquivos ignorados no build Docker
 └── README.md           # Este arquivo
-```
-
-## 🐳 Comandos Docker Úteis
-
-### Gerenciamento de Containers
-```bash
-# Ver status dos containers
-docker-compose ps
-
-# Reiniciar apenas a aplicação
-docker-compose restart atmos-app
-
-# Rebuild e restart da aplicação
-docker-compose up --build atmos-app
-
-# Parar e remover volumes (CUIDADO: apaga dados)
-docker-compose down -v
-```
-
-### Logs e Debugging
-```bash
-# Ver logs de todos os serviços
-docker-compose logs
-
-# Ver logs apenas da aplicação
-docker-compose logs atmos-app
-
-# Seguir logs em tempo real
-docker-compose logs -f atmos-app
-
-# Entrar no container da aplicação
-docker-compose exec atmos-app bash
-```
-
-### Testando a Aplicação
-```bash
-# Ver logs da aplicação
-docker-compose logs -f atmos-app
-
-# Verificar se está conectado aos serviços de nuvem
-docker-compose logs atmos-app | grep -i "conectado\|connected"
-```
-
-### Limpeza
-```bash
-# Parar todos os serviços
-docker-compose down
-
-# Remover containers e volumes
-docker-compose down -v
-
-# Remover imagens não utilizadas
-docker system prune -a
-```
-
-Para visualizar os logs em tempo real, execute:
-```bash
-python src/main.py 2>&1 | tee logs.txt
 ```
