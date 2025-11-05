@@ -147,3 +147,17 @@ Atmos-receptor-dados/
 ├── .dockerignore       # Arquivos ignorados no build Docker
 └── README.md           # Este arquivo
 ```
+
+## 📝 Testes
+
+### Testes Unitários
+Execute os testes unitários localizados em `test/unit`:
+```bash
+python -m pytest test/unit
+```
+
+### Testes de Integração
+Execute os testes de integração localizados em `test/integration`:
+```bash
+python -m pytest test/integration
+```
