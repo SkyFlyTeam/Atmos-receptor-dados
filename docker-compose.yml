@@ -1,7 +1,7 @@
 version: '3.8'
 
 services:
-  atmos-app:
+  atmos-receptor:
     build: .
     container_name: atmos-receptor
     restart: unless-stopped
@@ -12,4 +12,4 @@ services:
       MQTT_HOST: ${MQTT_HOST}
       MQTT_TOPIC: ${MQTT_TOPIC}
     volumes:
-      - ./logs:/app/logs
+      - ./logs:/receptor/logs
