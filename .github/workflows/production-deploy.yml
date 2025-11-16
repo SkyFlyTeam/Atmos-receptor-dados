@@ -1,9 +1,9 @@
-name: Deploy to Staging Server
+name: Deploy to Production Server
 
 on:
   push:
     branches:
-      - release  
+      - main  
   workflow_dispatch:
 
 jobs:
