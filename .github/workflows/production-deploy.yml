@@ -1,0 +1,58 @@
+name: Deploy to Staging Server
+
+on:
+  push:
+    branches:
+      - release  
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. Checkout do repositório
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. Logar no GitHub Container Registry (GHCR)
+      - name: Log in to GHCR
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}  # usa o token do GitHub
+
+      # 3. Construção da imagem Docker
+      - name: Build Docker image
+        run: |
+          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker build -t ghcr.io/${REPO_NAME}-prod:${{ github.sha }} .
+          docker tag ghcr.io/${REPO_NAME}-prod:${{ github.sha }} ghcr.io/${REPO_NAME}-prod:latest
+
+      # 4. Push da imagem para o GHCR
+      - name: Push Docker image to GHCR
+        run: |
+          REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+          docker push ghcr.io/${REPO_NAME}-prod:${{ github.sha }}
+          docker push ghcr.io/${REPO_NAME}-prod:latest
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: SSH to server and pull latest image
+        uses: appleboy/ssh-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          script: |
+            REPO_NAME=$(echo "${{ github.repository }}" | tr '[:upper:]' '[:lower:]')
+            # Puxar a última versão da imagem Docker
+            docker pull ghcr.io/${REPO_NAME}-prod:${{ github.sha }}
+            docker tag ghcr.io/${REPO_NAME}-prod:${{ github.sha }} atmos-receptor-prod:latest
+            # Reiniciar o container (com Docker Compose)
+            docker-compose -f /home/andre/atmos-production/receptor/docker-compose.yml down
+            docker-compose -f /home/andre/atmos-production/receptor/docker-compose.yml up -d
