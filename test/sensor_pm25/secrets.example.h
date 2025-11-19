@@ -7,7 +7,7 @@ const char* SECRET_PWD = "SENHA_DO_WIFI";
 
 // Configurações do Servidor MQTT
 const char* SECRET_MQTT_SERVER = "BROKER_SERVER";
-const int SECRET_MQTT_PORT = 'PORTA DO BROKER '; // [INT] PORTA DO BROKER 
+const int SECRET_MQTT_PORT = 'PORT'; // [INT] porta do broker
 const char* SRECET_MQTT_TOPIC = "BROKER_TOPIC";
 
 // Configurações do servidor NTP
